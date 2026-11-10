@@ -68,7 +68,7 @@ superpowers:finishing-a-development-branch 사용
 
 워크스페이스와 원장은 superpowers:subagent-driven-development와 **공유한다** — 같은 디렉터리, 같은 형식 — 그래서 하나의 계획이 실행 중간에 실행자를 바꿔도 새 실행자가 같은 원장에서 재개할 수 있다.
 
-- 각 계획은 워크스페이스를 소유한다. 스킬 시작 시 `../subagent-driven-development/scripts/sdd-workspace PLAN_FILE`을 실행하면 계획의 git-ignore된 디렉터리(`<repo-root>/.superpowers/sdd/<plan-basename>/`)를 출력한다. **이 계획의** 모든 산출물(원장, 브리프, 리뷰 패키지)이 여기 산다. 다른 계획의 디렉터리는 절대 읽거나 쓰지 않는다
+- 각 계획은 워크스페이스를 소유한다. 스킬 시작 시 `../subagent-driven-development/scripts/sdd-workspace PLAN_FILE`을 **절대 경로로, 실행 중인 작업 트리 안에서** 실행하면 계획의 git-ignore된 디렉터리(`<repo-root>/.superpowers/sdd/<plan-basename>/`)를 출력한다. **이 계획의** 모든 산출물(원장, 브리프, 리뷰 패키지)이 여기 산다. 다른 계획의 디렉터리는 절대 읽거나 쓰지 않는다
 - `<workspace>/progress.md`에 이 계획의 원장이 있는지 확인한다. 첫 줄이 내 계획 파일을 가리키면, `Task <N>: complete` 줄이 있는 태스크는 **끝난 것**이다 — 다시 하지 않고, 그 줄이 없는 첫 태스크에서 재개한다. 내 컨텍스트가 더 이상 기억하지 못해도 그 커밋들은 git에 존재한다. 컴팩션 이후에는 내 기억보다 원장과 `git log`를 믿는다. 첫 줄이 다른 계획 파일을 가리키는 원장은 다른 계획의 진행 기록이다. 그대로 두고 내 것을 새로 시작한다
 - 원장을 만들 때 첫 줄에 정체를 적는다: `# SDD ledger — plan: <계획 파일 경로>`
 - `git clean -fdx`는 워크스페이스를 파괴한다(git-ignore된 스크래치다). 그런 일이 생기면 `git log`에서 복구한다
@@ -85,7 +85,7 @@ Task 1 전에 계획에서 태스크 간 충돌을 스캔한다. 계획의 Inter
 
 ### 1. 태스크를 집는다
 
-- 이 스킬의 `scripts/task-start PLAN_FILE N`을 실행한다. 브리프 경로와 BASE(태스크의 범위가 잘려 나오는 커밋)를 한 번에 출력한다. **모든 태스크의 브리프를 읽는다.** 셋업에서 본 기억이 있는 태스크도 마찬가지다. 기억하는 것은 요약이고, 브리프에는 정확한 값, 시그니처, 테스트 케이스가 있다
+- 이 스킬의 `scripts/task-start PLAN_FILE N`을 절대 경로로, 실행 중인 작업 트리 안에서 실행한다. 브리프 경로와 BASE(태스크의 범위가 잘려 나오는 커밋)를 한 번에 출력한다. **모든 태스크의 브리프를 읽는다.** 셋업에서 본 기억이 있는 태스크도 마찬가지다. 기억하는 것은 요약이고, 브리프에는 정확한 값, 시그니처, 테스트 케이스가 있다
 - 태스크의 todo를 in_progress로 표시한다
 
 모든 툴 호출은 컨텍스트 전체를 다시 읽는 한 턴이다. 사무 작업은 실제 작업에 얹어 간다 — 원장 추가는 커밋과 **같은 호출**에서, 절대 단독 호출로 하지 않는다.
@@ -115,7 +115,7 @@ Task 1 전에 계획에서 태스크 간 충돌을 스캔한다. 계획의 Inter
 
 ### 4. 태스크를 완료한다
 
-이 스킬의 `scripts/task-done PLAN_FILE N BASE -- <테스트 명령>`을 브리프가 태스크 전체에 대해 지정한 테스트 명령으로 실행한다. 테스트를 돌리고, 전체 출력을 워크스페이스에 보관하고, 꼬리를 출력하고, **통과한 경우에만** 완료 줄을 원장에 추가한다:
+이 스킬의 `scripts/task-done PLAN_FILE N BASE -- <테스트 명령>`을 절대 경로로, 실행 중인 작업 트리 안에서, 브리프가 태스크 전체에 대해 지정한 테스트 명령으로 실행한다. 테스트를 돌리고, 전체 출력을 워크스페이스에 보관하고, 꼬리를 출력하고, **통과한 경우에만** 완료 줄을 원장에 추가한다:
 
 `Task <N>: complete (commits <base7>..<head7>, tests: <command> → <result>)`
 
@@ -123,7 +123,7 @@ Task 1 전에 계획에서 태스크 간 충돌을 스캔한다. 계획의 Inter
 
 ## 최종 리뷰
 
-`../subagent-driven-development/scripts/review-package PLAN_FILE MERGE_BASE HEAD`를 실행하고(MERGE_BASE = 브랜치가 시작된 커밋, 예: `git merge-base main HEAD`) 그것이 출력한 파일로 리뷰한다.
+`../subagent-driven-development/scripts/review-package PLAN_FILE MERGE_BASE HEAD`를 절대 경로로, 실행 중인 작업 트리 안에서 실행하고(MERGE_BASE = 브랜치가 시작된 커밋, 예: `git merge-base main HEAD`) 그것이 출력한 파일로 리뷰한다.
 
 **서브에이전트 도구가 있을 때:** 가장 유능한 모델로 리뷰어를 파견한다 — 브랜치 전체 리뷰는 판단 작업이다. superpowers:requesting-code-review의 [code-reviewer.md](../../../skills/requesting-code-review/code-reviewer.md)를 쓰고, 패키지 경로, 계획과 스펙 경로, 계획에 Review Focus 섹션이 있다면 그것을 그대로(계획의 테스트가 검사하지 않는 입력 종류와 실패 모드 — 리뷰어가 각각을 의도적으로 점검한다), 그리고 내가 내린 판단을 저울질할 수 있도록 원장의 `Ruling:` 줄에 대한 포인터를 함께 준다. **모델을 명시적으로 지정한다.** 생략하면 세션 모델을 상속하는데 그것이 가장 유능한 모델이 아닐 수 있다. 이것이 이번 실행 전체가 사는 단 하나의 새 컨텍스트다. 건너뛰지 않고, 내가 diff를 읽는 것으로 대체하지 않는다.
 

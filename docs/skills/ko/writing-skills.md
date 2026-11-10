@@ -10,7 +10,7 @@
 
 **스킬을 쓰는 것은 프로세스 문서에 적용한 테스트 주도 개발이다.**
 
-**개인 스킬은 런타임의 skills 디렉터리에 산다**(Claude Code에서는 `~/.claude/skills/`). 다른 런타임의 경로는 `../using-superpowers/references/`의 codex-tools.md, gemini-tools.md를 참고한다. Codex, Copilot CLI, Gemini CLI는 모두 `~/.agents/skills/`를 교차 런타임 별칭으로도 인식한다.
+**개인 스킬은 런타임의 skills 디렉터리에 산다**(Claude Code에서는 `~/.claude/skills/`). 다른 런타임의 경로는 [`codex-tools.md`](../../../skills/using-superpowers/references/codex-tools.md)나 [`gemini-tools.md`](../../../skills/using-superpowers/references/gemini-tools.md)를 참고한다. Codex, Copilot CLI, Gemini CLI는 모두 `~/.agents/skills/`를 교차 런타임 별칭으로도 인식한다.
 
 테스트 케이스를 쓰고(서브에이전트를 쓰는 압박 시나리오), 실패를 지켜보고(기준선 동작), 스킬을 쓰고(문서), 테스트가 통과하는 것을 보고(에이전트가 준수함), 리팩터링한다(빠져나갈 구멍 막기).
 
@@ -18,13 +18,14 @@
 
 **필수 배경:** 이 스킬을 쓰기 전에 superpowers:test-driven-development를 이해해야 한다. 그 스킬이 근본적인 RED-GREEN-REFACTOR 사이클을 정의한다. 이 스킬은 TDD를 문서에 적응시킨 것이다.
 
-**공식 가이드:** Anthropic의 공식 스킬 작성 베스트 프랙티스는 원문 디렉터리의 `anthropic-best-practices.md`를 참고한다. 이 문서는 그것을 보완하는 추가 패턴과 지침을 제공한다.
+**공식 가이드:** Anthropic의 공식 스킬 작성 베스트 프랙티스는 [`references/anthropic-best-practices.md`](../../../skills/writing-skills/references/anthropic-best-practices.md)를 참고한다. 그 문서는 이 스킬의 TDD 중심 접근을 보완하는 추가 패턴과 지침을 제공한다.
 
 ## 스킬이란?
 
 **스킬**은 검증된 기법, 패턴, 도구에 대한 참조 가이드다. 스킬은 미래의 에이전트가 효과적인 접근을 찾아 적용하도록 돕는다.
 
 **스킬인 것:** 재사용 가능한 기법, 패턴, 도구, 참조 가이드
+
 **스킬이 아닌 것:** 어떤 문제를 한 번 어떻게 풀었는지에 대한 서사
 
 ## 스킬 작성의 TDD 대응표
@@ -89,229 +90,15 @@ skills/
 - 코드 패턴 (50줄 미만)
 - 그 외 전부
 
-## SKILL.md 구조
+## SKILL.md 작성
 
-**프론트매터 (YAML):**
-- 필수 필드 둘: `name`과 `description` (지원되는 전체 필드는 [agentskills.io/specification](https://agentskills.io/specification) 참고)
-- 총 1024자 이내
-- `name`: 영문자, 숫자, 하이픈만 (괄호나 특수문자 금지)
-- `description`: 3인칭, **언제 쓰는지만** 서술 (무엇을 하는지가 아니라)
-  - 트리거 조건에 집중하도록 "Use when..."으로 시작
-  - 구체적 증상, 상황, 맥락을 포함
-  - **스킬의 프로세스나 워크플로를 절대 요약하지 않는다** (이유는 아래 SDO 절)
-  - 가능하면 500자 이내
+스킬의 `description`은 **언제 쓰는지만** 말한다: "Use when..."으로 시작하는 트리거 조건과 증상. 스킬의 워크플로는 절대 요약하지 않는다. 워크플로 요약을 읽은 에이전트는 스킬을 읽는 대신 그 요약을 따르기 때문이다.
 
-```markdown
----
-name: Skill-Name-With-Hyphens
-description: Use when [구체적 트리거 조건과 증상]
----
+스킬의 프론트매터, 이름, description을 쓰거나 바꿀 때, 또는 스킬의 크기를 줄여야 할 때는 [`references/discovery.md`](../../../skills/writing-skills/references/discovery.md)를 읽는다. 거기에는 SKILL.md 템플릿, description과 키워드 지침, 이름 짓기, 토큰 예산, 다른 스킬 상호 참조하기가 담겨 있다.
 
-# Skill Name
+## 플로차트
 
-## Overview
-이게 무엇인가? 핵심 원칙 1~2문장.
-
-## When to Use
-[판단이 명백하지 않을 때만 작은 인라인 플로차트]
-
-증상과 사용 사례가 담긴 불릿 목록
-쓰지 말아야 할 때
-
-## Core Pattern (기법/패턴용)
-before/after 코드 비교
-
-## Quick Reference
-훑어볼 수 있는 표나 불릿
-
-## Implementation
-단순 패턴은 인라인 코드
-무거운 참조나 재사용 도구는 파일로 링크
-
-## Common Mistakes
-무엇이 잘못되는가 + 수정
-
-## Real-World Impact (선택)
-구체적 결과
-```
-
-## 스킬 발견 최적화 (SDO)
-
-**발견에 결정적:** 미래의 에이전트가 이 스킬을 **찾을** 수 있어야 한다.
-
-### 1. 풍부한 description 필드
-
-**목적:** 에이전트는 description을 읽고 주어진 작업에 어떤 스킬을 로드할지 정한다. "지금 이 스킬을 읽어야 하는가?"에 답하게 만든다.
-
-**형식:** 트리거 조건에 집중하도록 "Use when..."으로 시작한다.
-
-**결정적: description = 언제 쓰는가이지, 스킬이 무엇을 하는가가 아니다**
-
-description은 **트리거 조건만** 서술해야 한다. 스킬의 프로세스나 워크플로를 description에 요약하지 **않는다**.
-
-**왜 중요한가:** 테스트 결과, description이 스킬의 워크플로를 요약하면 에이전트가 **스킬 내용을 읽는 대신 description을 따를 수 있다**. "태스크 사이의 코드 리뷰"라고 쓴 description은 에이전트가 리뷰를 **한 번만** 하게 만들었다 — 스킬의 플로차트가 두 번의 리뷰를 분명히 보여주고 있었는데도.
-
-description을 "Use when executing implementation plans with independent tasks"(워크플로 요약 없음)로 바꾸자 에이전트는 플로차트를 제대로 읽고 2단계 리뷰 프로세스를 따랐다.
-
-**함정:** 워크플로를 요약하는 description은 에이전트가 택할 **지름길**을 만든다. 스킬 본문은 에이전트가 건너뛰는 문서가 된다.
-
-```yaml
-# ❌ 나쁨: 워크플로를 요약 — 에이전트가 스킬을 읽는 대신 이것을 따를 수 있다
-description: Use when executing plans - dispatches subagent per task with code review between tasks
-
-# ❌ 나쁨: 프로세스 세부가 너무 많음
-description: Use for TDD - write test first, watch it fail, write minimal code, refactor
-
-# ✅ 좋음: 트리거 조건만, 워크플로 요약 없음
-description: Use when executing implementation plans with independent tasks in the current session
-
-# ✅ 좋음: 트리거 조건만
-description: Use when implementing any feature or bugfix, before writing implementation code
-```
-
-**내용:**
-- 이 스킬이 해당됨을 알리는 구체적 트리거, 증상, 상황을 쓴다
-- *언어 특정 증상*(setTimeout, sleep)이 아니라 *문제*(경쟁 상태, 일관되지 않은 동작)를 서술한다
-- 스킬 자체가 기술 특정적이지 않은 한 트리거를 기술 중립적으로 유지한다
-- 스킬이 기술 특정적이면 그 점을 트리거에 명시한다
-- 3인칭으로 쓴다 (시스템 프롬프트에 주입된다)
-- **스킬의 프로세스나 워크플로를 절대 요약하지 않는다**
-
-```yaml
-# ❌ 나쁨: 너무 추상적, 모호, 언제 쓰는지 없음
-description: For async testing
-
-# ❌ 나쁨: 1인칭
-description: I can help you with async tests when they're flaky
-
-# ❌ 나쁨: 기술을 언급하지만 스킬이 그 기술 특정적이지 않음
-description: Use when tests use setTimeout/sleep and are flaky
-
-# ✅ 좋음: "Use when"으로 시작, 문제를 서술, 워크플로 없음
-description: Use when tests have race conditions, timing dependencies, or pass/fail inconsistently
-
-# ✅ 좋음: 트리거를 명시한 기술 특정 스킬
-description: Use when using React Router and handling authentication redirects
-```
-
-### 2. 키워드 커버리지
-
-에이전트가 검색할 법한 단어를 쓴다:
-- 에러 메시지: "Hook timed out", "ENOTEMPTY", "race condition"
-- 증상: "flaky", "hanging", "zombie", "pollution"
-- 동의어: "timeout/hang/freeze", "cleanup/teardown/afterEach"
-- 도구: 실제 명령, 라이브러리 이름, 파일 유형
-
-### 3. 서술적 이름 짓기
-
-**능동태, 동사 우선:**
-- ✅ `creating-skills` (❌ `skill-creation`)
-- ✅ `condition-based-waiting` (❌ `async-test-helpers`)
-
-### 4. 토큰 효율 (결정적)
-
-**문제:** getting-started와 자주 참조되는 스킬은 **모든 대화**에 로드된다. 토큰 하나하나가 중요하다.
-
-**목표 단어 수:**
-- getting-started 워크플로: 각 150단어 미만
-- 자주 로드되는 스킬: 총 200단어 미만
-- 그 외 스킬: 500단어 미만 (그래도 간결하게)
-
-**기법:**
-
-**세부는 도구의 help로 옮긴다:**
-```bash
-# ❌ 나쁨: 모든 플래그를 SKILL.md에 문서화
-search-conversations supports --text, --both, --after DATE, --before DATE, --limit N
-
-# ✅ 좋음: --help를 참조
-search-conversations supports multiple modes and filters. Run --help for details.
-```
-
-**상호 참조를 쓴다:**
-```markdown
-# ❌ 나쁨: 워크플로 세부를 반복
-검색할 때는 이 템플릿으로 서브에이전트를 파견한다...
-[반복되는 지침 20줄]
-
-# ✅ 좋음: 다른 스킬을 참조
-항상 서브에이전트를 쓴다 (컨텍스트 50~100배 절약). REQUIRED: Use [other-skill-name] for workflow.
-```
-
-**예시를 압축한다:**
-```markdown
-# ❌ 나쁨: 장황한 예시 (42단어)
-사람 파트너: "React Router에서 인증 에러를 전에 어떻게 처리했었지?"
-나: React Router 인증 패턴에 대해 과거 대화를 검색하겠습니다.
-[검색 쿼리로 서브에이전트 파견: "React Router authentication error handling 401"]
-
-# ✅ 좋음: 최소 예시 (20단어)
-파트너: "React Router에서 auth 에러를 어떻게 처리했지?"
-나: 검색 중...
-[서브에이전트 파견 → 종합]
-```
-
-**중복을 제거한다:**
-- 상호 참조된 스킬에 있는 내용을 반복하지 않는다
-- 명령에서 자명한 것을 설명하지 않는다
-- 같은 패턴의 예시를 여러 개 넣지 않는다
-
-**검증:**
-```bash
-wc -w skills/path/SKILL.md
-# getting-started 워크플로: 각 150 미만 목표
-# 그 외 자주 로드되는 것: 총 200 미만 목표
-```
-
-**하는 일이나 핵심 통찰로 이름 짓는다:**
-- ✅ `condition-based-waiting` > `async-test-helpers`
-- ✅ `using-skills` (❌ `skill-usage`)
-- ✅ `flatten-with-flags` > `data-structure-refactoring`
-- ✅ `root-cause-tracing` > `debugging-techniques`
-
-**동명사(-ing)가 프로세스에 잘 맞는다:**
-- `creating-skills`, `testing-skills`, `debugging-with-logs`
-- 능동적이고, 취하는 행동을 서술한다
-
-### 5. 다른 스킬 상호 참조하기
-
-**다른 스킬을 참조하는 문서를 쓸 때:**
-
-스킬 이름만 쓰고, 명시적인 요구 표시를 붙인다:
-- ✅ 좋음: `**REQUIRED SUB-SKILL:** Use superpowers:test-driven-development`
-- ✅ 좋음: `**REQUIRED BACKGROUND:** You MUST understand superpowers:systematic-debugging`
-- ❌ 나쁨: `See skills/testing/test-driven-development` (필수인지 불분명)
-- ❌ 나쁨: `@skills/testing/test-driven-development/SKILL.md` (강제 로드, 컨텍스트 소모)
-
-**왜 @ 링크를 쓰지 않나:** `@` 문법은 파일을 즉시 강제 로드해서, 필요해지기도 전에 200k 이상의 컨텍스트를 소모한다.
-
-## 플로차트 사용
-
-```
-정보를 보여줘야 하나?
- └─ 예 → 내가 틀릴 수 있는 판단 지점인가?
-      ├─ 예 → 작은 인라인 플로차트
-      └─ 아니오 → 마크다운을 쓴다
-```
-
-**플로차트는 다음에만 쓴다:**
-- 명백하지 않은 판단 지점
-- 너무 일찍 멈출 수 있는 프로세스 루프
-- "언제 A vs B" 판단
-
-**플로차트를 절대 쓰지 말 것:**
-- 참조 자료 → 표, 목록
-- 코드 예시 → 마크다운 블록
-- 선형 지시 → 번호 목록
-- 의미 없는 라벨 (step1, helper2)
-
-graphviz 스타일 규칙은 원문 디렉터리의 `graphviz-conventions.dot`을 참고한다.
-
-**사람 파트너를 위한 시각화:** 원문 디렉터리의 `render-graphs.js`로 스킬의 플로차트를 SVG로 렌더링한다:
-```bash
-node ./render-graphs.js ../some-skill           # 다이어그램을 각각
-node ./render-graphs.js ../some-skill --combine # 모든 다이어그램을 SVG 하나에
-```
+스킬에 플로차트를 추가하거나 바꿀 때는 먼저 [`references/flowcharts.md`](../../../skills/writing-skills/references/flowcharts.md)를 읽는다. 거기에는 플로차트가 언제 제 몫을 하는지, graphviz 규칙, 플로차트를 렌더링하는 방법이 담겨 있다.
 
 ## 코드 예시
 
@@ -455,7 +242,7 @@ pptx/
 
 | 기준선 실패 | 맞는 형식 | 틀린 형식 |
 |---|---|---|
-| 압박 속에 규칙을 건너뛰거나 위반 (알면서도 어김) | 금지 + 합리화 표 + 위험 신호 (아래 방탄화 참고) | 부드러운 안내 ("~을 선호", "~을 고려") |
+| 압박 속에 규칙을 건너뛰거나 위반 (알면서도 어김) | 금지 + 합리화 표 + 위험 신호 ([`references/bulletproofing.md`](../../../skills/writing-skills/references/bulletproofing.md) 참고) | 부드러운 안내 ("~을 선호", "~을 고려") |
 | 준수는 하지만 출력의 **모양**이 틀림 (프롬프트가 비대함, 평결이 묻힘, 스펙을 되풀이함) | **긍정적 레시피 또는 계약**: 출력이 **무엇인지** — 그 부분들을, 순서대로 — 진술 | 금지 목록 ("되풀이하지 마라", "서술하지 마라") |
 | 이미 만들고 있는 것에서 필수 요소를 **누락** | **구조적**: 채우는 템플릿 안의 REQUIRED 필드나 슬롯 | 템플릿 근처의 산문 알림 |
 | 동작이 조건에 의존해야 함 | **관측 가능한 술어**에 연결된 조건문 ("브리프가 있으면 그것을 참조하라") | 무조건 규칙 + 예외 조항 |
@@ -466,79 +253,9 @@ pptx/
 - **뉘앙스 조항 금지.** "중요한 경우가 아니면 X 하지 마라"는 협상을 다시 연다 — 이기고 있던 레시피에 뉘앙스 조항 하나를 덧붙이자 같은 워딩 테스트에서 일관성이 노이즈로 떨어졌다. 진짜 예외는 **관측 가능한 술어에 대한 자기만의 조건문**으로 표현하라
 - **예외 조항은 범위를 한정하지 못한다.** "이 제한은 코드 블록에는 적용되지 않는다"고 해도 여전히 코드 블록을 억제한다. 출력의 일부가 면제되어야 한다면, 규칙이 거기 닿을 수 없도록 구조를 다시 짜라
 
-## 합리화에 대한 스킬 방탄화
+## 합리화에 대한 방탄화
 
-규율을 강제하는 스킬(TDD 같은)은 합리화에 저항해야 한다. 에이전트는 똑똑하고, 압박을 받으면 빠져나갈 구멍을 찾아낸다.
-
-**범위:** 이 도구 모음은 **규율 실패** — 규칙을 알면서 압박 속에 건너뛰는 에이전트 — 를 위한 것이다. 모양이 틀린 출력이나 누락된 요소에는 금지 기반 방탄화가 역효과를 낸다. 위 "실패 유형에 형식을 맞춰라"의 형식을 쓰라.
-
-**심리학 노트:** 설득 기법이 **왜** 통하는지 이해하면 체계적으로 적용할 수 있다. 권위, 일관성, 희소성, 사회적 증거, 유대 원리에 대한 연구 기반(Cialdini, 2021; Meincke et al., 2025)은 원문 디렉터리의 `persuasion-principles.md`를 참고한다.
-
-### 모든 구멍을 명시적으로 막아라
-
-규칙만 진술하지 말고 **구체적인 우회로를 금지**한다:
-
-나쁨:
-```markdown
-Write code before test? Delete it.
-```
-
-좋음:
-```markdown
-Write code before test? Delete it. Start over.
-
-**No exceptions:**
-- Don't keep it as "reference"
-- Don't "adapt" it while writing tests
-- Don't look at it
-- Delete means delete
-```
-
-### "정신 대 문자" 논변을 다뤄라
-
-기초 원칙을 앞쪽에 넣는다:
-
-```markdown
-**Violating the letter of the rules is violating the spirit of the rules.**
-```
-
-이것이 "나는 정신을 따르고 있다"는 합리화 부류 전체를 차단한다.
-
-### 합리화 표를 만들어라
-
-기준선 테스트에서 나온 합리화를 포착한다(아래 테스트 절 참고). 에이전트가 하는 모든 변명이 표에 들어간다:
-
-```markdown
-| Excuse | Reality |
-|--------|---------|
-| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
-| "I'll test after" | Tests passing immediately prove nothing. |
-| "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
-```
-
-### 위험 신호 목록을 만들어라
-
-에이전트가 합리화 중임을 스스로 점검하기 쉽게 만든다:
-
-```markdown
-## Red Flags - STOP and Start Over
-
-- Code before test
-- "I already manually tested it"
-- "Tests after achieve the same purpose"
-- "It's about spirit not ritual"
-- "This is different because..."
-
-**All of these mean: Delete code. Start over with TDD.**
-```
-
-### 위반 증상으로 SDO를 갱신하라
-
-규칙을 **위반하기 직전**의 증상을 description에 추가한다:
-
-```yaml
-description: use when implementing any feature or bugfix, before writing implementation code
-```
+기준선 실패가 **규율 실패**라면, 지침을 쓰기 전에 [`references/bulletproofing.md`](../../../skills/writing-skills/references/bulletproofing.md)를 읽는다. 거기에는 구멍 막기, "정신 대 문자" 문장, 합리화 표, 위험 신호 목록이 담겨 있다.
 
 ## 스킬을 위한 RED-GREEN-REFACTOR
 
@@ -575,7 +292,7 @@ TDD 사이클을 따른다.
 
 마이크로 테스트는 워딩을 검증할 뿐, 규율 스킬의 압박 시나리오를 대체하지 않는다.
 
-**테스트 방법론:** 완전한 테스트 방법론은 원문 디렉터리의 `testing-skills-with-subagents.md`를 참고한다:
+**테스트 방법론:** 완전한 테스트 방법론은 [`references/testing-skills-with-subagents.md`](../../../skills/writing-skills/references/testing-skills-with-subagents.md)를 참고한다:
 - 압박 시나리오 작성법
 - 압박 유형 (시간, 매몰비용, 권위, 피로)
 - 체계적으로 구멍 막기
@@ -671,9 +388,12 @@ helper1, helper2, step3, pattern4
 
 ## 함께 있는 파일 (원문)
 
-- `testing-skills-with-subagents.md` — 완전한 테스트 방법론
-- `anthropic-best-practices.md` — Anthropic 공식 스킬 작성 가이드
-- `persuasion-principles.md` — 설득 원리 연구 기반
-- `graphviz-conventions.dot` — 다이어그램 스타일 규칙
-- `render-graphs.js` — 플로차트를 SVG로 렌더링
-- `examples/` — 예시 모음
+- `references/discovery.md` — SKILL.md 템플릿, description·키워드 지침, 이름 짓기, 토큰 예산, 다른 스킬 상호 참조
+- `references/flowcharts.md` — 플로차트를 쓸 때와 쓰지 말 때, graphviz 규칙, 렌더링 방법
+- `references/bulletproofing.md` — 합리화에 대한 방탄화 (구멍 막기, 정신 대 문자, 합리화 표, 위험 신호)
+- `references/testing-skills-with-subagents.md` — 완전한 테스트 방법론
+- `references/CLAUDE_MD_TESTING.md` — CLAUDE.md 문서 변형을 테스트한 전체 캠페인 예시
+- `references/anthropic-best-practices.md` — Anthropic 공식 스킬 작성 가이드
+- `references/persuasion-principles.md` — 설득 원리 연구 기반
+- `references/graphviz-conventions.dot` — 다이어그램 스타일 규칙
+- `render-graphs.js` — 플로차트를 SVG로 렌더링 (스킬 디렉터리 루트)

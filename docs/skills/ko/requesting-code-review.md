@@ -53,7 +53,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 나: 진행 전에 코드 리뷰를 요청하겠습니다.
 
-BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
+BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | cut -d' ' -f1)
 HEAD_SHA=$(git rev-parse HEAD)
 
 [코드 리뷰어 서브에이전트 파견]

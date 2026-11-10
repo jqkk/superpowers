@@ -2,6 +2,8 @@
 
 `skills/*/SKILL.md` 15개를 한국어로 정리한 참조 문서입니다.
 
+> **기준 버전: v7.0.2** (`22f0b46`). 원문이 업데이트되면 `git diff 22f0b46 HEAD -- 'skills/*/SKILL.md'`로 바뀐 스킬만 골라 갱신하세요.
+
 > **정본은 영어 원문입니다.** 에이전트가 실제로 읽고 따르는 것은 `skills/<이름>/SKILL.md`이고,
 > 이 디렉터리는 사람이 읽기 위한 번역·요약입니다. 원문과 내용이 다르면 원문이 맞습니다.
 >
@@ -14,19 +16,21 @@
 using-superpowers  ← 세션 시작 시 항상 로드되는 진입점
         │
         ▼
-  brainstorming ──────────────────────────────┐
-  (spike / bounded / architectural 분류)       │ spike → 답변만
-        │ architectural                        │ bounded → 짧은 설계 승인 후 바로 구현
-        ▼                                      │
-  writing-plans  (계획 문서 작성 + 실행 방식 선택)│
-        │                                      │
-   ┌────┴─────────────────┐                    │
-   ▼                      ▼                    │
-executing-plans   subagent-driven-development   │
-(인라인 실행)       (태스크별 서브에이전트)        │
-   └────────┬─────────────┘                    │
-            ▼                                  │
-finishing-a-development-branch  ←───────────────┘
+  brainstorming   무엇을·왜 원하는지 파악 → 접근안 선택 → 설계 문서 승인
+        │         (작은 변경은 짧은 문서, 프로젝트는 전체 설계)
+        │
+        │  예외) 요청에 필요한 게 다 있는 빠르고 명확한 작업 → 바로 처리
+        │        사람이 질문을 건너뛰기로 함 → 스킬 종료, 요청대로 진행
+        ▼
+  writing-plans   (계획 문서 작성 + 실행 방식 선택)
+        │
+   ┌────┴─────────────────┐
+   ▼                      ▼
+executing-plans   subagent-driven-development
+(인라인 실행)       (태스크별 서브에이전트)
+   └────────┬─────────────┘
+            ▼
+finishing-a-development-branch
 (머지 / PR / 정리)
 
 상시 적용:  test-driven-development · systematic-debugging · verification-before-completion
@@ -40,8 +44,8 @@ finishing-a-development-branch  ←───────────────
 | 스킬 | 언제 발동하나 | 핵심 한 줄 |
 |---|---|---|
 | [using-superpowers](using-superpowers.md) | 모든 대화 시작 시 | 1%라도 해당되면 스킬을 먼저 호출한다 |
-| [brainstorming](brainstorming.md) | 무언가 만들기 전 | spike/bounded/architectural로 분류하고 승인받기 전엔 구현 금지 |
-| [writing-plans](writing-plans.md) | 스펙이 나왔고 다단계 작업일 때 | 컨텍스트 0인 엔지니어용 계획서, 스텝당 2~5분 |
+| [brainstorming](brainstorming.md) | 무언가 만들거나 새로 기획하기 전 (소프트웨어 밖 포함) | 무엇을·왜 원하는지 먼저 묻고, 설계 문서 승인 전엔 구현 금지 |
+| [writing-plans](writing-plans.md) | 스펙이 나왔고 다단계 작업일 때 | 구현자가 혼자 못 내리는 결정(파일·시그니처·값·테스트)만 담고, 코드 본문은 쓰지 않는다 |
 | [executing-plans](executing-plans.md) | 인라인 실행을 선택했을 때 | 원장에 기록하며 혼자 실행, 마지막에 전체 리뷰 1회 |
 | [subagent-driven-development](subagent-driven-development.md) | 태스크가 독립적일 때 | 태스크마다 새 구현자 + 새 리뷰어, 수정 루프 최대 5라운드 |
 | [test-driven-development](test-driven-development.md) | 모든 기능·버그픽스 구현 전 | 실패하는 테스트 없이 프로덕션 코드 없음 |
